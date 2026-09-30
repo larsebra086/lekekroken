@@ -1,0 +1,1080 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lekekroken">
+<meta name="theme-color" content="#43B383">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+<title>Lekekroken</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EAF5EF; --bg2:#D7EEE2; --card:#FFFFFF; --ink:#24344D; --muted:#6D7E93; --line:#C9DCD3;
+  --sun:#FFC93C; --berry:#E4508F; --age2:#43B383; --age3:#6C7CE7;
+  --shadow:0 5px 0 rgba(36,52,77,.13);
+  --r:26px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#172433; --bg2:#1F3143; --card:#26394D; --ink:#EEF4F8; --muted:#A5B6C7; --line:#3A5068;
+    --shadow:0 5px 0 rgba(0,0,0,.35); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#172433; --bg2:#1F3143; --card:#26394D; --ink:#EEF4F8; --muted:#A5B6C7; --line:#3A5068;
+  --shadow:0 5px 0 rgba(0,0,0,.35); color-scheme:dark;
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font-family:'Baloo 2','Nunito','Trebuchet MS',system-ui,sans-serif;
+  overflow:hidden;-webkit-user-select:none;user-select:none;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-touch-callout:none;overscroll-behavior:none;-webkit-text-size-adjust:100%;
+}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0;touch-action:manipulation}
+button:focus-visible{outline:4px solid var(--age3);outline-offset:3px}
+.emo{font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;line-height:1}
+#app{position:relative;height:100%;overflow:hidden}
+.screen{position:absolute;inset:0;display:none;flex-direction:column}
+.screen.active{display:flex}
+
+/* ---------- Forside ---------- */
+#home{align-items:center;justify-content:center;gap:clamp(14px,3.5vh,34px);padding:20px;text-align:center}
+#home::before{content:"";position:absolute;inset:auto -10% -30% -10%;height:55%;background:var(--bg2);border-radius:50% 50% 0 0;z-index:0}
+#home>*{position:relative;z-index:1}
+.logo{margin:0;font-size:clamp(46px,11vw,86px);font-weight:800;line-height:.9;letter-spacing:-1px;color:var(--ink)}
+.logo span{display:inline-block;animation:wave 3s ease-in-out infinite}
+.trio{display:flex;align-items:flex-end;gap:clamp(4px,2vw,18px)}
+.trio .c{width:clamp(78px,20vw,130px);animation:hop 2.6s ease-in-out infinite}
+.trio .c:nth-child(2){width:clamp(92px,24vw,150px);animation-delay:.35s}
+.trio .c:nth-child(3){animation-delay:.7s}
+.names{display:flex;gap:clamp(18px,8vw,70px);font-weight:700;color:var(--muted);font-size:clamp(15px,3.6vw,20px);margin-top:-8px}
+.ages{display:flex;gap:clamp(14px,4vw,34px);flex-wrap:wrap;justify-content:center}
+.agebtn{width:clamp(140px,38vw,220px);aspect-ratio:1;border-radius:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;box-shadow:0 8px 0 rgba(36,52,77,.2);transition:transform .15s}
+.agebtn:active{transform:translateY(4px) scale(.97)}
+.agebtn.a2{background:var(--age2)} .agebtn.a3{background:var(--age3)}
+.agebtn .num{font-size:clamp(72px,18vw,120px);font-weight:800;line-height:.85}
+.agebtn .lbl{font-size:clamp(18px,4.6vw,26px);font-weight:700}
+.agebtn .candles{font-size:clamp(20px,5vw,30px);letter-spacing:4px}
+.parent{position:absolute;top:12px;right:12px;z-index:5}
+.holdbtn{position:relative;overflow:hidden;padding:9px 16px;border-radius:999px;background:var(--card);box-shadow:var(--shadow);font-size:15px;font-weight:600;color:var(--muted)}
+.holdbtn::after{content:"";position:absolute;left:0;bottom:0;height:5px;width:0;background:var(--sun)}
+.holdbtn.holding::after{width:100%;transition:width var(--hold,1500ms) linear}
+
+/* ---------- Topplinje ---------- */
+.bar{display:flex;align-items:center;gap:10px;padding:10px 12px 4px}
+.iconbtn{width:58px;height:58px;flex:none;border-radius:20px;background:var(--card);box-shadow:var(--shadow);font-size:28px;display:grid;place-items:center}
+.iconbtn:active{transform:translateY(3px)}
+.bar h2{flex:1;margin:0;text-align:center;font-size:clamp(20px,5vw,30px);font-weight:800;line-height:1.1}
+.stars{flex:none;min-width:58px;height:58px;padding:0 12px;border-radius:20px;background:var(--card);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:22px}
+.spacer{width:58px;flex:none}
+
+/* ---------- Meny ---------- */
+.menugrid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(140px,40vw,190px),1fr));gap:clamp(12px,3vw,20px);padding:12px 16px 140px;align-content:start;max-width:920px;width:100%;margin:0 auto}
+.gtile{background:var(--card);border-radius:var(--r);padding:20px 10px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:var(--shadow);border-bottom:8px solid var(--age2);transition:transform .15s}
+.age3 .gtile{border-bottom-color:var(--age3)}
+.gtile:active{transform:scale(.96)}
+.gtile .emo{font-size:clamp(50px,13vw,68px)}
+.gtile .t{font-weight:700;font-size:clamp(16px,4vw,19px);line-height:1.15;text-align:center}
+
+/* ---------- Spillflate ---------- */
+.stage{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(12px,2.6vh,24px);padding:8px 12px 128px;overflow-y:auto;overflow-x:hidden}
+.stage.locked{pointer-events:none}
+.tile{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);display:grid;place-items:center;aspect-ratio:1;position:relative}
+.tile .emo{font-size:clamp(50px,13vw,86px)}
+.g6{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2.6vw,18px);width:min(94vw,540px,calc((100vh - 300px) * 1.5))}
+.rowtiles{display:flex;gap:clamp(12px,4vw,28px);justify-content:center;flex-wrap:wrap}
+.rowtiles .tile{width:clamp(110px,28vw,190px)}
+.tile.right{background:color-mix(in srgb,var(--age2) 28%,var(--card))}
+.pill{padding:12px 24px;border-radius:999px;background:var(--card);box-shadow:var(--shadow);font-weight:700;font-size:19px}
+.pill.go{background:var(--sun);color:#3a2a00}
+
+/* Farger og former */
+.field{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,4vw,30px);width:min(90vw,480px,calc((100vh - 280px) * 1.5))}
+.cell{aspect-ratio:1;display:grid;place-items:center}
+.shape{width:86%;height:86%;transition:transform .35s,opacity .35s;box-shadow:inset 0 -8px 0 rgba(0,0,0,.12)}
+.shape.circle{border-radius:50%}
+.shape.square{border-radius:16px}
+.shape.triangle{clip-path:polygon(50% 6%,96% 92%,4% 92%);box-shadow:none}
+.shape.gone{transform:scale(1.5) rotate(20deg);opacity:0;pointer-events:none}
+
+/* Dra og slipp */
+.draggable{touch-action:none;cursor:grab}
+.dragging{z-index:60;position:relative;cursor:grabbing;filter:drop-shadow(0 12px 10px rgba(0,0,0,.22))}
+.dragrow{display:flex;align-items:center;justify-content:center;gap:clamp(8px,4vw,40px);width:100%;flex-wrap:wrap}
+.item{font-size:clamp(62px,16vw,110px);width:clamp(100px,27vw,165px);aspect-ratio:1;display:grid;place-items:center;background:var(--card);border-radius:50%;box-shadow:var(--shadow)}
+.target{position:relative;font-size:clamp(92px,24vw,165px);width:clamp(140px,38vw,235px);aspect-ratio:1;border-radius:40px;border:5px dashed var(--line);display:grid;place-items:center}
+.target .item{position:absolute;right:2%;bottom:2%;width:48%;font-size:.36em;box-shadow:none}
+.arrow{font-size:clamp(34px,8vw,52px);color:var(--muted);font-weight:800;animation:nudge 1.1s ease-in-out infinite}
+
+/* Musikk */
+.xylo{display:flex;align-items:center;gap:clamp(5px,1.6vw,12px);height:min(44vh,330px);width:min(94vw,660px);touch-action:none}
+.barx{flex:1;border-radius:16px;position:relative;box-shadow:inset 0 -10px 0 rgba(0,0,0,.14)}
+.barx::before,.barx::after{content:"";position:absolute;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:rgba(255,255,255,.75)}
+.barx::before{top:10%} .barx::after{bottom:12%}
+.instr{display:flex;gap:clamp(12px,4vw,24px)}
+.instr .tile{width:clamp(78px,20vw,112px)}
+.instr .emo{font-size:clamp(40px,10vw,58px)}
+
+/* Puslespill */
+.puzzle{display:flex;flex-direction:column;align-items:center;gap:18px}
+.board{position:relative;width:max(240px,min(88vw,470px,calc((100vh - 400px) * 1.5)));aspect-ratio:3/2;border-radius:18px;background:var(--card);box-shadow:var(--shadow);overflow:hidden}
+.ghost{position:absolute;inset:0;background-size:100% 100%;opacity:.2}
+.slot{position:absolute;border:2px dashed var(--line)}
+.tray{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:94vw}
+.piece{width:var(--pw,100px);height:var(--ph,70px);background-repeat:no-repeat;border-radius:10px;box-shadow:0 4px 0 rgba(0,0,0,.18);border:2px solid #fff}
+.piece.placed{position:absolute;border-radius:0;box-shadow:none;border:0}
+
+/* Sortering */
+.bins{display:flex;gap:clamp(10px,3vw,24px);width:min(94vw,620px)}
+.bin{flex:1;background:var(--card);border-radius:var(--r);border:4px dashed var(--line);min-height:clamp(150px,25vh,220px);display:flex;flex-direction:column;align-items:center;padding:10px 8px;gap:2px}
+.bin .head{font-size:clamp(40px,10vw,58px)}
+.bin .lab{font-weight:700;font-size:clamp(17px,4.2vw,21px)}
+.binbody{display:flex;flex-wrap:wrap;gap:2px;justify-content:center}
+.sitem{font-size:clamp(46px,11vw,64px);width:clamp(72px,18vw,98px);aspect-ratio:1;display:grid;place-items:center;background:var(--card);border-radius:50%;box-shadow:var(--shadow);transition:opacity .3s,transform .3s}
+.binbody .sitem{font-size:clamp(28px,7vw,40px);width:auto;padding:2px;background:none;box-shadow:none}
+.stray{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:620px}
+
+/* Memory */
+.mem{display:grid;gap:clamp(8px,2.4vw,16px);width:min(94vw,560px,calc((100vh - 250px) * 1.3))}
+.mem.c3{grid-template-columns:repeat(3,1fr);width:min(82vw,420px,calc((100vh - 250px) * 1.1))}
+.mem.c4{grid-template-columns:repeat(4,1fr)}
+.card{aspect-ratio:3/4;perspective:800px}
+.inner{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+.card.open .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:grid;place-items:center;box-shadow:var(--shadow)}
+.back{background-color:var(--age3);background-image:radial-gradient(rgba(255,255,255,.22) 2px,transparent 2.6px);background-size:16px 16px}
+.back svg{width:64%}
+.front{background:var(--card);transform:rotateY(180deg);font-size:clamp(38px,10vw,62px)}
+.card.matched .front{background:color-mix(in srgb,var(--age2) 30%,var(--card))}
+
+/* Telling */
+.target-num{display:flex;align-items:center;gap:16px;background:var(--card);border-radius:var(--r);padding:6px 22px;box-shadow:var(--shadow)}
+.bignum{font-size:clamp(56px,13vw,84px);font-weight:800;color:var(--berry);line-height:1}
+.dots{display:flex;gap:7px}
+.dot{width:20px;height:20px;border-radius:50%;border:3px solid var(--berry);transition:background .2s}
+.dot.fill{background:var(--berry)}
+.bush{width:min(90vw,450px);min-height:clamp(140px,22vh,200px);background:radial-gradient(circle at 30% 30%,#6FCB73,#3E9E54);border-radius:48% 52% 40% 44%/60% 60% 40% 40%;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:clamp(4px,1.6vw,10px);padding:18px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.12)}
+.berry{font-size:clamp(40px,9.5vw,56px);transition:opacity .2s}
+.bowl{display:flex;flex-direction:column;align-items:center}
+.bowlin{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;min-height:46px;width:clamp(160px,40vw,240px);gap:0}
+.bowlin .berry{font-size:32px}
+.bowlimg{font-size:clamp(62px,14vw,88px);margin-top:-16px}
+
+/* Mønstre */
+.seq{display:flex;gap:clamp(4px,1.6vw,12px);background:var(--card);padding:clamp(10px,2vw,16px);border-radius:var(--r);box-shadow:var(--shadow)}
+.pcell{width:clamp(42px,12vw,76px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:clamp(28px,8vw,52px)}
+.pcell.q{border:4px dashed var(--muted);color:var(--muted);font-weight:800;font-family:'Baloo 2',sans-serif}
+.opts{display:flex;gap:clamp(14px,5vw,30px)}
+.opt{width:clamp(80px,21vw,112px);aspect-ratio:1;border-radius:50%;background:var(--card);box-shadow:var(--shadow);display:grid;place-items:center;font-size:clamp(42px,11vw,64px)}
+.sw2{display:block;width:72%;height:72%;border-radius:50%}
+
+/* Fargelegging */
+.paper{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:8px;width:max(230px,min(92vw,500px,calc((100vh - 360px) * 1.25)))}
+.paper svg{display:block;width:100%;height:auto}
+.rg{cursor:pointer;transition:fill .2s}
+.palette{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:560px}
+.sw{width:clamp(40px,10vw,54px);aspect-ratio:1;border-radius:50%;border:4px solid var(--card);box-shadow:0 0 0 2px var(--line);transition:transform .15s}
+.sw.sel{transform:scale(1.2);box-shadow:0 0 0 4px var(--ink)}
+.cbtns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+/* Påkledning */
+.dressscene{position:relative;width:min(94vw,560px);border-radius:var(--r);padding:14px 12px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;overflow:hidden;color:#24344D}
+.dressscene.sol{background:linear-gradient(#FFE59A,#FFF7DB)}
+.dressscene.regn{background:linear-gradient(#9FB0C4,#DCE4EC)}
+.dressscene.sno{background:linear-gradient(#C8E1F6,#F4FAFF)}
+.weather{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800;background:rgba(255,255,255,.75);padding:4px 18px;border-radius:999px;z-index:2}
+.weather .emo{font-size:30px}
+.toffewrap{--w:clamp(130px,30vw,190px);position:relative;width:var(--w);aspect-ratio:2/3;z-index:2}
+.toffewrap svg{width:100%;height:100%;display:block}
+.worn{position:absolute;transform:translate(-50%,-50%);animation:popin .45s cubic-bezier(.3,1.6,.5,1)}
+.clothes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;z-index:3}
+.sitem.done{opacity:0;transform:scale(.4)!important;pointer-events:none}
+.fallp{position:absolute;top:-20px;z-index:1;pointer-events:none}
+.fallp.drop{width:3px;height:16px;border-radius:3px;background:rgba(60,90,140,.45);animation:fall 1.1s linear infinite}
+.fallp.flake{color:#fff;font-size:18px;animation:fall 5s linear infinite;text-shadow:0 0 3px rgba(80,120,170,.6)}
+
+/* ---------- Guiden (figuren som snakker) ---------- */
+#guide{position:absolute;left:10px;bottom:10px;display:flex;align-items:flex-end;gap:6px;z-index:30;pointer-events:none}
+#guide[hidden]{display:none}
+.gchar{width:clamp(76px,18vw,104px);pointer-events:auto;cursor:pointer;transform-origin:50% 100%}
+.bubble{background:var(--card);border-radius:22px 22px 22px 6px;padding:10px 16px;font-size:clamp(16px,4vw,20px);font-weight:600;line-height:1.25;box-shadow:var(--shadow);max-width:min(64vw,380px);margin-bottom:36px}
+.bubble:empty{display:none}
+#guide.talk .gchar{animation:talk .45s ease-in-out 3}
+#guide.cheer .gchar{animation:jump .6s ease 2}
+.eyes{transform-box:fill-box;transform-origin:center;animation:blink 5s infinite}
+
+/* ---------- Lag og effekter ---------- */
+#fx{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
+.part{position:absolute;font-size:30px;animation:burst 1.3s ease-out forwards}
+.floaty{position:absolute;transform:translate(-50%,-50%);font-weight:800;font-size:24px;color:var(--berry);animation:floaty 1.1s ease-out forwards;white-space:nowrap;text-shadow:0 2px 0 var(--card)}
+.overlay{position:absolute;inset:0;background:rgba(20,32,48,.6);display:none;align-items:center;justify-content:center;z-index:80;padding:20px}
+.overlay.show{display:flex}
+.panel{background:var(--card);border-radius:30px;padding:24px;max-width:440px;width:100%;box-shadow:var(--shadow);text-align:left}
+.panel h3{margin:0 0 6px;font-size:26px;font-weight:800}
+.panel p{margin:6px 0 14px;color:var(--muted);line-height:1.35;font-size:16px}
+.setrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:2px solid var(--line);font-weight:600;font-size:18px}
+.seg{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.seg button{padding:6px 14px;border-radius:12px;background:var(--bg2);font-weight:700;font-size:16px}
+.seg button.on{background:var(--age3);color:#fff}
+.pausebox{text-align:center}
+.pausebox .sleep{display:flex;justify-content:center;gap:6px;margin:6px 0 8px}
+.pausebox .sleep svg{width:80px}
+.pausebox .zz{font-size:28px;font-weight:800;color:var(--muted)}
+
+.boing{animation:boing .5s}
+.shake{animation:shake .45s}
+.glow{animation:glow 1.2s ease-in-out infinite}
+
+@keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes wave{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+@keyframes talk{0%,100%{transform:scale(1)}50%{transform:scale(1.05,.95)}}
+@keyframes jump{0%,100%{transform:translateY(0)}40%{transform:translateY(-26px) rotate(-6deg)}70%{transform:translateY(0) scale(1.08,.92)}}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes boing{0%{transform:scale(1)}30%{transform:scale(1.16,.86)}55%{transform:scale(.93,1.08)}80%{transform:scale(1.03)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+@keyframes glow{0%,100%{box-shadow:var(--shadow),0 0 0 0 rgba(255,201,60,0)}50%{box-shadow:var(--shadow),0 0 0 12px rgba(255,201,60,.65)}}
+@keyframes nudge{0%,100%{transform:translateX(-6px)}50%{transform:translateX(8px)}}
+@keyframes popin{0%{transform:translate(-50%,-50%) scale(.2)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes burst{0%{transform:translate(-50%,-50%) scale(.3);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.2) rotate(var(--rot));opacity:0}}
+@keyframes floaty{0%{transform:translate(-50%,-50%);opacity:1}100%{transform:translate(-50%,-190%);opacity:0}}
+@keyframes fall{to{transform:translateY(760px)}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Forside: velg alder -->
+  <section id="home" class="screen active">
+    <div class="parent"><button class="holdbtn" id="parentBtn" aria-label="Voksenmeny, hold inne">⚙️ Voksne: hold inne</button></div>
+    <h1 class="logo"><span>Lekekroken</span></h1>
+    <div class="trio" id="trio"></div>
+    <div class="names"><span>Nuppe</span><span>Toffe</span><span>Pling</span></div>
+    <div class="ages">
+      <button class="agebtn a2" data-age="2"><span class="candles emo">🕯️🕯️</span><span class="num">2</span><span class="lbl">Jeg er 2 år</span></button>
+      <button class="agebtn a3" data-age="3"><span class="candles emo">🕯️🕯️🕯️</span><span class="num">3</span><span class="lbl">Jeg er 3 år</span></button>
+    </div>
+  </section>
+
+  <!-- Meny: velg spill -->
+  <section id="menu" class="screen">
+    <div class="bar">
+      <button class="iconbtn" id="menuBack" aria-label="Tilbake til forsiden">🏠</button>
+      <h2 id="menuTitle">Velg et spill</h2>
+      <div class="spacer"></div>
+    </div>
+    <div class="menugrid" id="menuGrid"></div>
+  </section>
+
+  <!-- Selve spillet -->
+  <section id="game" class="screen">
+    <div class="bar">
+      <button class="iconbtn" id="gameBack" aria-label="Tilbake til spillene">⬅️</button>
+      <h2 id="gameTitle"></h2>
+      <div class="stars" aria-label="Stjerner"><span class="emo">⭐</span><span id="starN">0</span></div>
+      <button class="iconbtn" id="repeatBtn" aria-label="Hør igjen">🔊</button>
+    </div>
+    <div class="stage" id="stage"></div>
+  </section>
+
+  <div id="guide" hidden><div class="gchar" id="gchar"></div><div class="bubble" id="bubble"></div></div>
+
+  <!-- Voksenpanel -->
+  <div class="overlay" id="parentOv">
+    <div class="panel">
+      <h3>For voksne</h3>
+      <p id="voiceInfo">Appen bruker talesyntesen som finnes på enheten.</p>
+      <div class="setrow"><span>Stemme</span><div class="seg" data-set="voice"><button data-v="true">På</button><button data-v="false">Av</button></div></div>
+      <div class="setrow"><span>Lyder</span><div class="seg" data-set="sound"><button data-v="true">På</button><button data-v="false">Av</button></div></div>
+      <div class="setrow"><span>Pause etter</span><div class="seg" data-set="pause"><button data-v="0">Av</button><button data-v="10">10 min</button><button data-v="15">15 min</button><button data-v="20">20 min</button></div></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:16px"><button class="pill go" id="parentClose">Lukk</button></div>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div class="overlay" id="pauseOv">
+    <div class="panel pausebox">
+      <div class="sleep" id="sleepers"></div>
+      <div class="zz">z z z</div>
+      <h3>Pausetid!</h3>
+      <p>Nå har vi lekt lenge. Figurene skal hvile litt, og det kan du også.</p>
+      <button class="holdbtn" id="pauseContinue">Voksne: hold inne for å fortsette</button>
+    </div>
+  </div>
+
+  <div id="fx"></div>
+</div>
+
+<script>
+/* =========================================================
+   Figurene: Toffe (bjørn), Pling (fugl) og Nuppe (frosk)
+   ========================================================= */
+const CHARS = {
+  toffe: { name:'Toffe', art:`
+    <circle cx="28" cy="32" r="15" fill="#9C6440"/><circle cx="28" cy="32" r="7.5" fill="#EBC29A"/>
+    <circle cx="92" cy="32" r="15" fill="#9C6440"/><circle cx="92" cy="32" r="7.5" fill="#EBC29A"/>
+    <ellipse cx="60" cy="68" rx="46" ry="43" fill="#B77A4F"/>
+    <ellipse cx="60" cy="84" rx="23" ry="17" fill="#EFCCA6"/>
+    <ellipse cx="60" cy="76" rx="8" ry="5.5" fill="#3A2820"/>
+    <path d="M51 86 Q60 94 69 86" fill="none" stroke="#3A2820" stroke-width="3" stroke-linecap="round"/>
+    <g class="eyes"><circle cx="43" cy="58" r="6.5" fill="#2B1E18"/><circle cx="77" cy="58" r="6.5" fill="#2B1E18"/><circle cx="45" cy="56" r="2.2" fill="#fff"/><circle cx="79" cy="56" r="2.2" fill="#fff"/></g>
+    <circle cx="31" cy="76" r="6" fill="#F28B82" opacity=".55"/><circle cx="89" cy="76" r="6" fill="#F28B82" opacity=".55"/>`},
+  pling: { name:'Pling', art:`
+    <path d="M56 26 Q48 10 57 5 Q60 15 62 22 Q68 8 78 10 Q70 17 66 27Z" fill="#2F7FC7"/>
+    <ellipse cx="17" cy="72" rx="12" ry="19" fill="#3F8FD6" transform="rotate(22 17 72)"/>
+    <ellipse cx="103" cy="72" rx="12" ry="19" fill="#3F8FD6" transform="rotate(-22 103 72)"/>
+    <circle cx="60" cy="66" r="44" fill="#5AAEEB"/>
+    <ellipse cx="60" cy="86" rx="26" ry="20" fill="#D4ECFF"/>
+    <g class="eyes"><circle cx="44" cy="56" r="11" fill="#fff"/><circle cx="76" cy="56" r="11" fill="#fff"/><circle cx="46" cy="57" r="5.5" fill="#1D2A3A"/><circle cx="74" cy="57" r="5.5" fill="#1D2A3A"/><circle cx="48" cy="55" r="2" fill="#fff"/><circle cx="76" cy="55" r="2" fill="#fff"/></g>
+    <path d="M51 68 L69 68 L60 81Z" fill="#FFB02E" stroke="#FFB02E" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="31" cy="73" r="6" fill="#F28B82" opacity=".5"/><circle cx="89" cy="73" r="6" fill="#F28B82" opacity=".5"/>
+    <path d="M50 108 l-5 8 M50 108 l0 9 M70 108 l5 8 M70 108 l0 9" stroke="#FFB02E" stroke-width="3.5" stroke-linecap="round"/>`},
+  nuppe: { name:'Nuppe', art:`
+    <circle cx="36" cy="40" r="18" fill="#63BF62"/><circle cx="84" cy="40" r="18" fill="#63BF62"/>
+    <ellipse cx="60" cy="76" rx="50" ry="37" fill="#63BF62"/>
+    <ellipse cx="60" cy="90" rx="30" ry="16" fill="#BDE8AC"/>
+    <circle cx="58" cy="54" r="3.5" fill="#4FA64F"/><circle cx="70" cy="60" r="2.5" fill="#4FA64F"/><circle cx="48" cy="62" r="2.5" fill="#4FA64F"/>
+    <g class="eyes"><circle cx="36" cy="38" r="11" fill="#fff"/><circle cx="84" cy="38" r="11" fill="#fff"/><circle cx="37" cy="40" r="5.5" fill="#1F2A1F"/><circle cx="83" cy="40" r="5.5" fill="#1F2A1F"/><circle cx="39" cy="38" r="2" fill="#fff"/><circle cx="85" cy="38" r="2" fill="#fff"/></g>
+    <path d="M34 70 Q60 90 86 70" fill="none" stroke="#2E6B30" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="24" cy="72" r="6" fill="#F28B82" opacity=".5"/><circle cx="96" cy="72" r="6" fill="#F28B82" opacity=".5"/>`}
+};
+const charSVG = id => `<svg viewBox="0 0 120 120" aria-hidden="true">${CHARS[id].art}</svg>`;
+
+// Toffe i helfigur, til påkledningsspillet
+const TOFFE_FULL = `<svg viewBox="0 0 200 300" aria-hidden="true">
+  <circle cx="52" cy="40" r="22" fill="#9C6440"/><circle cx="52" cy="40" r="11" fill="#EBC29A"/>
+  <circle cx="148" cy="40" r="22" fill="#9C6440"/><circle cx="148" cy="40" r="11" fill="#EBC29A"/>
+  <ellipse cx="40" cy="195" rx="17" ry="38" fill="#A86E46" transform="rotate(22 40 195)"/>
+  <ellipse cx="160" cy="195" rx="17" ry="38" fill="#A86E46" transform="rotate(-22 160 195)"/>
+  <ellipse cx="78" cy="268" rx="24" ry="26" fill="#A86E46"/><ellipse cx="122" cy="268" rx="24" ry="26" fill="#A86E46"/>
+  <ellipse cx="100" cy="196" rx="58" ry="68" fill="#B77A4F"/>
+  <ellipse cx="100" cy="206" rx="36" ry="44" fill="#EFCCA6"/>
+  <circle cx="100" cy="86" r="62" fill="#B77A4F"/>
+  <ellipse cx="100" cy="108" rx="28" ry="20" fill="#EFCCA6"/>
+  <ellipse cx="100" cy="98" rx="10" ry="7" fill="#3A2820"/>
+  <path d="M89 112 Q100 122 111 112" fill="none" stroke="#3A2820" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="78" cy="76" r="8" fill="#2B1E18"/><circle cx="122" cy="76" r="8" fill="#2B1E18"/>
+  <circle cx="81" cy="73" r="2.6" fill="#fff"/><circle cx="125" cy="73" r="2.6" fill="#fff"/>
+  <circle cx="60" cy="102" r="9" fill="#F28B82" opacity=".5"/><circle cx="140" cy="102" r="9" fill="#F28B82" opacity=".5"/>
+</svg>`;
+
+/* =========================================================
+   Hjelpefunksjoner
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const rand = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const svgURL = svg => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+
+const settings = { voice:true, sound:true, pause:15 };
+try { Object.assign(settings, JSON.parse(localStorage.getItem('lekekroken-settings') || '{}')); } catch (e) {}
+function saveSettings(){ try { localStorage.setItem('lekekroken-settings', JSON.stringify(settings)); } catch (e) {} }
+
+/* ---------- Lyd (lages i nettleseren, ingen lydfiler) ---------- */
+let ac = null;
+function actx(){
+  if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; } }
+  if (ac && ac.state === 'suspended') ac.resume();
+  return ac;
+}
+function tone(f, d = .2, type = 'sine', v = .18, at = 0, f2){
+  if (!settings.sound) return;
+  const c = actx(); if (!c) return;
+  const t = c.currentTime + at;
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t);
+  if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(v, t + 0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(g).connect(c.destination);
+  o.start(t); o.stop(t + d + 0.05);
+}
+const sfx = {
+  tap(){ tone(660, .1, 'sine', .1, 0, 880); },
+  pop(){ tone(380, .16, 'triangle', .22, 0, 1250); },
+  win(){ [523, 659, 784, 1047].forEach((f, i) => tone(f, .28, 'triangle', .16, i * .1)); tone(1568, .5, 'sine', .06, .42); },
+  hint(){ tone(440, .18, 'sine', .09); tone(392, .26, 'sine', .09, .14); },
+  flip(){ tone(900, .08, 'triangle', .08, 0, 600); },
+  drum(){ tone(160, .4, 'sine', .4, 0, 45); },
+  bell(){ tone(1568, .7, 'sine', .12); tone(2093, .5, 'sine', .05, .02); },
+  frog(){ tone(190, .18, 'square', .06, 0, 95); tone(230, .2, 'square', .06, .2, 110); },
+  note(f){ tone(f, .7, 'triangle', .2); tone(f * 2, .3, 'sine', .05); }
+};
+
+/* ---------- Tale ---------- */
+let nbVoice = null;
+function pickVoice(){
+  try {
+    const vs = speechSynthesis.getVoices();
+    nbVoice = vs.find(v => /^(nb|no|nn)([-_]|$)/i.test(v.lang)) || vs.find(v => /norw|norsk/i.test(v.name)) || null;
+  } catch (e) {}
+}
+if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+
+let instruction = '';
+let talkTimer = null;
+function say(text){
+  const b = $('#bubble'); b.textContent = text;
+  const g = $('#guide'); g.classList.remove('talk'); void g.offsetWidth; g.classList.add('talk');
+  clearTimeout(talkTimer); talkTimer = setTimeout(() => g.classList.remove('talk'), 1500);
+  if (!settings.voice || !('speechSynthesis' in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'nb-NO'; if (nbVoice) u.voice = nbVoice;
+    u.rate = .92; u.pitch = 1.15;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function sayInstr(text){ instruction = text; say(text); }
+function hush(){ try { speechSynthesis.cancel(); } catch (e) {} }
+
+/* ---------- Animasjoner og effekter ---------- */
+function anim(el, cls){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); setTimeout(() => el.classList.remove(cls), 700); }
+const boing = el => anim(el, 'boing');
+const shake = el => anim(el, 'shake');
+function floatUp(el, text){
+  const r = el.getBoundingClientRect();
+  const s = h('div', 'floaty emo', text);
+  s.style.left = (r.left + r.width / 2) + 'px'; s.style.top = (r.top + r.height * .3) + 'px';
+  $('#fx').append(s); setTimeout(() => s.remove(), 1200);
+}
+function burst(){
+  const fx = $('#fx'); const cx = innerWidth / 2, cy = innerHeight * .45;
+  for (let i = 0; i < 22; i++) {
+    const p = h('div', 'part emo', rand(['⭐','✨','🎉','💛','🌟']));
+    const a = Math.random() * Math.PI * 2, d = 120 + Math.random() * 220;
+    p.style.left = cx + 'px'; p.style.top = cy + 'px';
+    p.style.setProperty('--dx', Math.cos(a) * d + 'px');
+    p.style.setProperty('--dy', Math.sin(a) * d + 'px');
+    p.style.setProperty('--rot', (Math.random() * 360 - 180) + 'deg');
+    fx.append(p); setTimeout(() => p.remove(), 1400);
+  }
+}
+function cheer(){ const g = $('#guide'); g.classList.remove('cheer'); void g.offsetWidth; g.classList.add('cheer'); setTimeout(() => g.classList.remove('cheer'), 1300); }
+
+/* Flytt et element inn i en ny forelder med en myk glideanimasjon */
+function flyInto(el, parent){
+  const a = el.getBoundingClientRect();
+  parent.appendChild(el);
+  el.style.transition = 'none'; el.style.transform = '';
+  const b = el.getBoundingClientRect();
+  el.style.transform = `translate(${a.left - b.left}px,${a.top - b.top}px)`;
+  void el.offsetWidth;
+  el.style.transition = 'transform .35s ease'; el.style.transform = '';
+}
+
+/* ---------- Dra og slipp ---------- */
+function draggable(el, onDrop){
+  el.classList.add('draggable');
+  el.addEventListener('pointerdown', e => {
+    if (el.classList.contains('done')) return;
+    e.preventDefault(); actx();
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+    const sx = e.clientX, sy = e.clientY;
+    el.style.transition = 'none'; el.classList.add('dragging'); sfx.tap();
+    const move = ev => { el.style.transform = `translate(${ev.clientX - sx}px,${ev.clientY - sy}px) scale(1.1)`; };
+    const up = ev => {
+      el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up);
+      el.classList.remove('dragging');
+      const ok = ev.type === 'pointerup' && onDrop(el, ev.clientX, ev.clientY);
+      if (!ok) { el.style.transition = 'transform .35s cubic-bezier(.3,1.5,.5,1)'; el.style.transform = ''; }
+    };
+    el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  });
+}
+function hit(target, x, y, pad = 40){
+  const r = target.getBoundingClientRect();
+  return x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad;
+}
+
+/* ---------- Hold-inne-knapp (foreldrelås) ---------- */
+function holdButton(btn, ms, onDone){
+  let t = null;
+  btn.style.setProperty('--hold', ms + 'ms');
+  btn.addEventListener('pointerdown', e => { e.preventDefault(); btn.classList.add('holding'); t = setTimeout(() => { btn.classList.remove('holding'); onDone(); }, ms); });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev => btn.addEventListener(ev, () => { clearTimeout(t); btn.classList.remove('holding'); }));
+  btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onDone(); } });
+}
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+/* =========================================================
+   Innhold
+   ========================================================= */
+const ANIMALS = [
+  {e:'🐶', n:'hunden', s:'voff voff'}, {e:'🐱', n:'katten', s:'mjau'}, {e:'🐮', n:'kua', s:'mø'},
+  {e:'🐷', n:'grisen', s:'nøff nøff'}, {e:'🦆', n:'anda', s:'rapp rapp'}, {e:'🐑', n:'sauen', s:'bææ'},
+  {e:'🐴', n:'hesten', s:'ihihi'}, {e:'🐔', n:'høna', s:'klukk klukk'}, {e:'🐸', n:'frosken', s:'kvekk kvekk'},
+  {e:'🦁', n:'løven', s:'rooaar'}
+];
+const COLORS = [
+  {n:'rød', nt:'rødt', c:'#E8504A'}, {n:'blå', nt:'blått', c:'#3F7FE0'},
+  {n:'gul', nt:'gult', c:'#F4C21B'}, {n:'grønn', nt:'grønt', c:'#3BB36C'}
+];
+const SHAPES = [
+  {k:'circle', n:'sirkel', pl:'sirklene'}, {k:'square', n:'firkant', pl:'firkantene'}, {k:'triangle', n:'trekant', pl:'trekantene'}
+];
+const DRAG_PAIRS = [
+  {item:'🍎', target:'🧺', text:'Legg eplet i kurven!', done:'Eplet er i kurven!'},
+  {item:'🧸', target:'🛏️', text:'Legg bamsen i senga!', done:'Nå kan bamsen sove.'},
+  {item:'🥕', target:'🐰', text:'Gi gulroten til kaninen!', done:'Nam nam, sier kaninen!'},
+  {item:'🐟', target:'🌊', text:'Hjelp fisken ut i vannet!', done:'Nå kan fisken svømme!'},
+  {item:'🚗', target:'🏠', text:'Kjør bilen hjem!', done:'Bilen er hjemme!'},
+  {item:'🦴', target:'🐶', text:'Gi beinet til hunden!', done:'Voff! Hunden er glad!'}
+];
+const SORT_SETS = [
+  {text:'Frukt i kurven, og leker i kassa!', hint:'Hmm, hører den hjemme der? Prøv den andre!', done:'Alt er ryddet!',
+   bins:[{icon:'🧺', label:'Frukt', items:['🍎','🍌','🍐']}, {icon:'📦', label:'Leker', items:['🧸','⚽','🚗']}]},
+  {text:'Hvem bor på land, og hvem bor i vannet?', hint:'Hmm, bor den der? Prøv den andre!', done:'Alle dyrene er hjemme!',
+   bins:[{icon:'🌳', label:'På land', items:['🐶','🐴','🐔']}, {icon:'🌊', label:'I vannet', items:['🐟','🐙','🐳']}]},
+  {text:'Røde ting her, og gule ting der!', hint:'Hmm, har den den fargen? Prøv den andre!', done:'Så fint sortert!',
+   bins:[{icon:'🔴', label:'Rødt', items:['🍓','🌹','🍒']}, {icon:'🟡', label:'Gult', items:['🍌','🌻','🐥']}]}
+];
+const MEM_POOL = ['🍎','🐶','⭐','🚗','🌸','🐟','🎈','🦋','🍓','🐸'];
+const NUMW = ['null','én','to','tre','fire','fem'];
+const PAT_EMO = ['🍎','🍌','⭐','🐶','🌸','🚗','🐟','🎈'];
+const PALETTE = ['#E8504A','#F28C28','#F4C21B','#7BC043','#2BB3A3','#3F7FE0','#7A5AE0','#F49AC1','#9C6440','#FFFFFF'];
+const PRAISE = ['Så flink du er!','Hurra!','Kjempebra!','Bra jobba!','Du klarte det!','Wow, så flott!'];
+
+const CLOTHES = {
+  '🕶️':{n:'solbriller', x:50, y:25, s:.46}, '🧢':{n:'caps', x:50, y:9, s:.46}, '🩳':{n:'shorts', x:50, y:83, s:.46},
+  '☂️':{n:'paraply', x:86, y:46, s:.5}, '👢':{n:'støvler', x:50, y:94, s:.42}, '🧥':{n:'regnjakke', x:50, y:65, s:.64},
+  '🧤':{n:'votter', x:16, y:74, s:.32}, '🧣':{n:'skjerf', x:50, y:47, s:.44}, '🥾':{n:'vinterstøvler', x:50, y:94, s:.42}
+};
+const WEATHERS = [
+  {k:'sol', icon:'☀️', label:'Sol', when:'når sola skinner', intro:'Sola skinner! Hva skal Toffe ha på seg?', done:'Nå er Toffe klar for sola!',
+   good:['🕶️','🧢','🩳'], bad:['🧤','🧣']},
+  {k:'regn', icon:'🌧️', label:'Regn', when:'når det regner', intro:'Det regner! Hva trenger Toffe nå?', done:'Nå kan Toffe hoppe i vannpytter!',
+   good:['☂️','👢','🧥'], bad:['🕶️','🩳']},
+  {k:'sno', icon:'❄️', label:'Snø', when:'når det snør', intro:'Det snør! Hva må Toffe ha på seg?', done:'Nå kan Toffe leke i snøen!',
+   good:['🧤','🧣','🥾'], bad:['🩳','🕶️']}
+];
+
+/* ---------- Bilder til puslespill (3:2) ---------- */
+const XMLNS = 'xmlns="http://www.w3.org/2000/svg"';
+const nest = (id, x, y, w) => `<svg x="${x}" y="${y}" width="${w}" height="${w}" viewBox="0 0 120 120">${CHARS[id].art}</svg>`;
+const PUZZLES = [
+  () => `<svg ${XMLNS} viewBox="0 0 300 200"><rect width="300" height="200" fill="#BFE6FF"/><circle cx="252" cy="40" r="24" fill="#FFD23F"/><g fill="#fff"><ellipse cx="70" cy="42" rx="30" ry="13"/><ellipse cx="92" cy="33" rx="20" ry="14"/></g><rect y="150" width="300" height="50" fill="#7BC96F"/><rect x="95" y="95" width="100" height="70" fill="#E8504A"/><path d="M84 98 L145 54 L206 98Z" fill="#6B4A3A"/><rect x="132" y="120" width="26" height="45" rx="3" fill="#FFD23F"/><rect x="106" y="108" width="20" height="20" fill="#CFEFFF" stroke="#fff" stroke-width="3"/><rect x="166" y="108" width="20" height="20" fill="#CFEFFF" stroke="#fff" stroke-width="3"/><rect x="238" y="112" width="12" height="44" fill="#8B5A3C"/><circle cx="244" cy="100" r="25" fill="#3DA35D"/><circle cx="36" cy="168" r="7" fill="#F49AC1"/><circle cx="58" cy="176" r="7" fill="#FFD23F"/></svg>`,
+  () => `<svg ${XMLNS} viewBox="0 0 300 200"><rect width="300" height="200" fill="#FFE8B8"/><circle cx="42" cy="38" r="20" fill="#FFC93C"/><ellipse cx="150" cy="200" rx="200" ry="44" fill="#8FD18A"/>${nest('toffe', 78, 26, 145)}<circle cx="262" cy="160" r="8" fill="#E8504A"/><circle cx="276" cy="170" r="8" fill="#E8504A"/></svg>`,
+  () => `<svg ${XMLNS} viewBox="0 0 300 200"><rect width="300" height="200" fill="#CDEBFF"/><circle cx="60" cy="44" r="22" fill="#FFD23F"/><rect y="130" width="300" height="70" fill="#3F8FD6"/><path d="M0 132 q25 -12 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 V145 H0Z" fill="#5AAEEB"/><path d="M110 128 L200 128 L186 150 L124 150Z" fill="#E8504A"/><rect x="152" y="50" width="5" height="78" fill="#6B4A3A"/><path d="M150 54 L150 122 L108 122Z" fill="#fff"/><path d="M159 60 L159 122 L196 122Z" fill="#FFC93C"/><path d="M60 172 q14 -12 28 0 q-14 12 -28 0z M88 172 l10 -8 v16z" fill="#F28C28"/><circle cx="240" cy="176" r="5" fill="#fff" opacity=".7"/><circle cx="250" cy="164" r="3" fill="#fff" opacity=".7"/></svg>`,
+  () => `<svg ${XMLNS} viewBox="0 0 300 200"><rect width="300" height="200" fill="#E7DDFF"/><ellipse cx="150" cy="205" rx="210" ry="56" fill="#8FD18A"/>${nest('nuppe', 8, 70, 100)}${nest('toffe', 100, 50, 110)}${nest('pling', 200, 70, 95)}<g fill="#fff" opacity=".9"><ellipse cx="80" cy="36" rx="26" ry="11"/><ellipse cx="220" cy="30" rx="30" ry="12"/></g></svg>`,
+  () => `<svg ${XMLNS} viewBox="0 0 300 200"><rect width="300" height="200" fill="#DFF3FF"/><path d="M0 170 Q150 130 300 170 V200 H0Z" fill="#8FD18A"/><rect x="40" y="96" width="220" height="12" rx="6" fill="#8B5A3C"/>${nest('pling', 90, 8, 120)}<circle cx="252" cy="40" r="18" fill="#FFD23F"/></svg>`,
+  () => `<svg ${XMLNS} viewBox="0 0 300 200"><rect width="300" height="200" fill="#C8F0DC"/><ellipse cx="150" cy="170" rx="120" ry="28" fill="#3F8FD6"/><ellipse cx="70" cy="168" rx="36" ry="12" fill="#3DB36C"/>${nest('nuppe', 88, 36, 125)}<circle cx="250" cy="44" r="6" fill="#F49AC1"/><circle cx="262" cy="52" r="6" fill="#F49AC1"/><circle cx="244" cy="56" r="6" fill="#F49AC1"/><circle cx="252" cy="50" r="4" fill="#FFD23F"/></svg>`
+];
+
+/* ---------- Fargeleggingsbilder ---------- */
+const G_OPEN = '<g fill="#fff" stroke="#24344D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">';
+const COLORING = [
+  `<svg viewBox="0 0 300 240">${G_OPEN}
+    <rect class="rg" x="3" y="3" width="294" height="180" rx="14"/>
+    <rect class="rg" x="3" y="162" width="294" height="75" rx="14"/>
+    <circle class="rg" cx="252" cy="44" r="24"/>
+    <path class="rg" d="M30 64 a14 14 0 0 1 14 -18 a18 18 0 0 1 34 -5 a14 14 0 0 1 20 23 z"/>
+    <rect class="rg" x="238" y="130" width="16" height="62"/>
+    <circle class="rg" cx="246" cy="114" r="30"/>
+    <rect class="rg" x="80" y="110" width="110" height="82"/>
+    <path class="rg" d="M66 112 L135 60 L204 112 Z"/>
+    <rect class="rg" x="122" y="142" width="28" height="50" rx="4"/>
+    <rect class="rg" x="90" y="124" width="24" height="24"/>
+    <rect class="rg" x="160" y="124" width="22" height="22"/>
+    <path d="M102 124v24M90 136h24M171 124v22M160 135h22" fill="none" pointer-events="none"/>
+    <path d="M40 222 v-18" fill="none" pointer-events="none"/><circle class="rg" cx="40" cy="198" r="10"/>
+    <path d="M70 224 v-16" fill="none" pointer-events="none"/><circle class="rg" cx="70" cy="202" r="9"/>
+  </g></svg>`,
+  `<svg viewBox="0 0 300 240">${G_OPEN}
+    <rect class="rg" x="3" y="3" width="294" height="234" rx="14"/>
+    <path class="rg" d="M3 204 Q150 176 297 204 V223 a14 14 0 0 1 -14 14 H17 a14 14 0 0 1 -14 -14Z"/>
+    <circle class="rg" cx="255" cy="46" r="22"/>
+    <ellipse class="rg" cx="84" cy="130" rx="20" ry="34" transform="rotate(22 84 130)"/>
+    <ellipse class="rg" cx="216" cy="130" rx="20" ry="34" transform="rotate(-22 216 130)"/>
+    <path class="rg" d="M140 56 Q130 30 146 22 Q150 38 154 50 Q164 28 180 32 Q168 42 162 58Z"/>
+    <circle class="rg" cx="150" cy="122" r="70"/>
+    <ellipse class="rg" cx="150" cy="152" rx="42" ry="32"/>
+    <circle cx="124" cy="104" r="15" fill="#fff" pointer-events="none"/><circle cx="176" cy="104" r="15" fill="#fff" pointer-events="none"/>
+    <circle cx="127" cy="106" r="6" fill="#24344D" pointer-events="none"/><circle cx="173" cy="106" r="6" fill="#24344D" pointer-events="none"/>
+    <path class="rg" d="M134 124 L166 124 L150 144 Z"/>
+    <path d="M136 192 l-7 12 M136 192 v14 M164 192 l7 12 M164 192 v14" fill="none" pointer-events="none"/>
+  </g></svg>`,
+  `<svg viewBox="0 0 300 240">${G_OPEN}
+    <rect class="rg" x="3" y="3" width="294" height="234" rx="14"/>
+    <path class="rg" d="M3 204 Q80 188 150 204 T297 200 V223 a14 14 0 0 1 -14 14 H17 a14 14 0 0 1 -14 -14Z"/>
+    <path class="rg" d="M40 206 Q28 170 44 136 Q58 170 52 206Z"/>
+    <path class="rg" d="M258 204 Q270 162 252 128 Q240 170 246 204Z"/>
+    <path class="rg" d="M198 112 L252 74 L246 152 Z"/>
+    <path class="rg" d="M112 74 Q140 40 172 74Z"/>
+    <ellipse class="rg" cx="140" cy="114" rx="72" ry="46"/>
+    <path class="rg" d="M136 70 Q150 114 136 158 L156 157 Q170 114 156 71Z"/>
+    <circle cx="96" cy="104" r="12" fill="#fff" pointer-events="none"/><circle cx="94" cy="106" r="5" fill="#24344D" pointer-events="none"/>
+    <path d="M76 126 q8 6 16 0" fill="none" pointer-events="none"/>
+    <circle class="rg" cx="92" cy="50" r="9"/><circle class="rg" cx="76" cy="28" r="6"/><circle class="rg" cx="200" cy="40" r="7"/>
+  </g></svg>`
+];
+
+/* =========================================================
+   Spillene
+   ========================================================= */
+
+// 2 år: Trykk og overrask
+function rSurprise(st){
+  sayInstr('Trykk på dyrene!');
+  const grid = h('div', 'g6');
+  shuffle(ANIMALS).slice(0, 6).forEach(a => {
+    const t = h('button', 'tile', `<span class="emo">${a.e}</span>`);
+    t.setAttribute('aria-label', a.n);
+    t.onclick = () => { actx(); sfx.pop(); boing(t); floatUp(t, cap(a.s) + '!'); say(`${cap(a.n)} sier ${a.s}!`); };
+    grid.append(t);
+  });
+  const more = h('button', 'pill', '<span class="emo">🔄</span> Nye dyr');
+  more.onclick = () => { roundNo++; runRound(); };
+  st.append(grid, more);
+}
+
+// 2 år: Hvor er?
+function rFind(st, n){
+  const count = n < 3 ? 2 : 3;
+  const opts = shuffle(ANIMALS).slice(0, count);
+  const target = rand(opts);
+  sayInstr(`Hvor er ${target.n}?`);
+  const row = h('div', 'rowtiles');
+  const tiles = opts.map(a => {
+    const t = h('button', 'tile', `<span class="emo">${a.e}</span>`);
+    t.onclick = () => {
+      if (a === target) { t.classList.add('right'); boing(t); win(`Ja! Der er ${target.n}! ${cap(target.s)}!`); }
+      else { sfx.hint(); shake(t); say(`Det er ${a.n}. Hvor er ${target.n}?`); tiles[opts.indexOf(target)].classList.add('glow'); }
+    };
+    row.append(t); return t;
+  });
+  st.append(row);
+}
+
+// 2 år: Farger og former
+function rColors(st, n){
+  const colorRound = n % 2 === 0;
+  const items = []; let okText, noText;
+  if (colorRound) {
+    const [tc, oc] = shuffle(COLORS);
+    for (let i = 0; i < 3; i++) { items.push({c:tc.c, s:rand(SHAPES).k, t:true}); items.push({c:oc.c, s:rand(SHAPES).k, t:false}); }
+    sayInstr(`Trykk på alt som er ${tc.nt}!`);
+    okText = () => cap(tc.n) + '!'; noText = () => `Den er ${oc.n}. Finn det som er ${tc.nt}!`;
+  } else {
+    const [ts, os] = shuffle(SHAPES); const cs = shuffle(COLORS);
+    for (let i = 0; i < 3; i++) { items.push({c:cs[i % 4].c, s:ts.k, t:true}); items.push({c:cs[(i + 1) % 4].c, s:os.k, t:false}); }
+    sayInstr(`Trykk på alle ${ts.pl}!`);
+    okText = () => `En ${ts.n}!`; noText = () => `Det er en ${os.n}. Finn ${ts.pl}!`;
+  }
+  const field = h('div', 'field'); let left = 3;
+  shuffle(items).forEach(it => {
+    const cell = h('div', 'cell'); const sh = h('button', 'shape ' + it.s);
+    sh.style.background = it.c;
+    sh.onclick = () => {
+      if (it.t) {
+        sfx.pop(); floatUp(sh, '⭐'); sh.classList.add('gone'); left--;
+        if (left === 0) later(() => win(), 350); else say(okText());
+      } else { sfx.hint(); shake(sh); say(noText()); }
+    };
+    cell.append(sh); field.append(cell);
+  });
+  st.append(field);
+}
+
+// 2 år: Legg på plass (dra og slipp)
+function rDrag(st, n, g){
+  const p = g.order[n % g.order.length];
+  sayInstr(p.text);
+  const row = h('div', 'dragrow');
+  const item = h('div', 'item emo', p.item);
+  const arrow = h('div', 'arrow', '➜');
+  const target = h('div', 'target emo', p.target);
+  row.append(item, arrow, target); st.append(row);
+  draggable(item, (el, x, y) => {
+    if (hit(target, x, y, 70)) {
+      el.classList.add('done'); arrow.style.visibility = 'hidden';
+      flyInto(el, target); sfx.pop(); boing(target);
+      later(() => win(p.done), 300); return true;
+    }
+    sfx.hint(); say(p.text); return false;
+  });
+}
+
+// 2 år: Musikk
+function rMusic(st){
+  sayInstr('La oss spille musikk! Trykk på fargene.');
+  const NOTES = [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77, 1046.5];
+  const CL = ['#E8504A','#F28C28','#F4C21B','#7BC043','#2BB3A3','#3F7FE0','#7A5AE0','#D35AB5'];
+  const x = h('div', 'xylo');
+  NOTES.forEach((f, i) => { const b = h('div', 'barx'); b.style.background = CL[i]; b.style.height = (100 - i * 6) + '%'; b.dataset.i = i; x.append(b); });
+  let down = false, last = null;
+  const play = b => { if (!b || b === last) return; last = b; sfx.note(NOTES[+b.dataset.i]); boing(b); floatUp(b, rand(['♪','♫'])); cheer(); };
+  x.addEventListener('pointerdown', e => { e.preventDefault(); actx(); down = true; last = null; try { x.setPointerCapture(e.pointerId); } catch (err) {} play(e.target.closest('.barx')); });
+  x.addEventListener('pointermove', e => { if (!down) return; const el = document.elementFromPoint(e.clientX, e.clientY); play(el && el.closest ? el.closest('.barx') : null); });
+  const end = () => { down = false; last = null; };
+  x.addEventListener('pointerup', end); x.addEventListener('pointercancel', end);
+  const inst = h('div', 'instr');
+  [['🥁','drum','Bom!'], ['🔔','bell','Pling!'], ['🐸','frog','Kvekk!']].forEach(([e, k, t]) => {
+    const b = h('button', 'tile', `<span class="emo">${e}</span>`);
+    b.onclick = () => { actx(); sfx[k](); boing(b); floatUp(b, t); cheer(); };
+    inst.append(b);
+  });
+  st.append(x, inst);
+}
+
+// 3 år: Puslespill
+function rPuzzle(st, n, g){
+  const [cols, rows] = n < 2 ? [2, 2] : [3, 2];
+  const url = svgURL(PUZZLES[g.order[n % g.order.length]]());
+  sayInstr(n < 2 ? 'Legg de fire bitene på plass!' : 'Nå er det seks biter. Klarer du det?');
+  const wrap = h('div', 'puzzle'), board = h('div', 'board'), ghost = h('div', 'ghost');
+  ghost.style.backgroundImage = `url("${url}")`; board.append(ghost);
+  const slots = [], pieces = [];
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const pos = {left:`${c / cols * 100}%`, top:`${r / rows * 100}%`, width:`${100 / cols}%`, height:`${100 / rows}%`};
+    const slot = h('div', 'slot'); Object.assign(slot.style, pos); board.append(slot); slots.push({slot, pos});
+    const p = h('div', 'piece');
+    p.style.backgroundImage = `url("${url}")`;
+    p.style.backgroundSize = `${cols * 100}% ${rows * 100}%`;
+    p.style.backgroundPosition = `${c / (cols - 1) * 100}% ${r / (rows - 1) * 100}%`;
+    p.dataset.k = r * cols + c; pieces.push(p);
+  }
+  const tray = h('div', 'tray'); shuffle(pieces).forEach(p => tray.append(p));
+  wrap.append(board, tray); st.append(wrap);
+  const size = () => { const r = board.getBoundingClientRect(); wrap.style.setProperty('--pw', r.width / cols * .9 + 'px'); wrap.style.setProperty('--ph', r.height / rows * .9 + 'px'); };
+  size(); g.onResize = size;
+  let placed = 0;
+  pieces.forEach(p => draggable(p, (el, x, y) => {
+    const {slot, pos} = slots[+el.dataset.k];
+    const sr = slot.getBoundingClientRect();
+    if (hit(slot, x, y, Math.min(sr.width, sr.height) * .3)) {
+      const a = el.getBoundingClientRect();
+      el.classList.add('done', 'placed'); board.append(el);
+      el.style.transition = 'none'; el.style.transform = ''; Object.assign(el.style, pos);
+      const b = el.getBoundingClientRect();
+      el.style.transformOrigin = '0 0';
+      el.style.transform = `translate(${a.left - b.left}px,${a.top - b.top}px) scale(${a.width / b.width})`;
+      void el.offsetWidth; el.style.transition = 'transform .3s ease'; el.style.transform = '';
+      sfx.pop(); placed++;
+      if (placed === pieces.length) later(() => win('Du klarte puslespillet!'), 450);
+      else say(rand(['Ja!','Der passet den!','Flott!']));
+      return true;
+    }
+    sfx.hint();
+    if (slots.some(s => hit(s.slot, x, y, 0))) say('Den passer et annet sted. Prøv igjen!');
+    return false;
+  }));
+}
+
+// 3 år: Sortering
+function rSort(st, n){
+  const set = SORT_SETS[n % SORT_SETS.length];
+  sayInstr(set.text);
+  const bins = h('div', 'bins');
+  const binEls = set.bins.map(b => {
+    const el = h('div', 'bin', `<div class="head emo">${b.icon}</div><div class="lab">${b.label}</div>`);
+    const body = h('div', 'binbody'); el.append(body); bins.append(el); return {el, body};
+  });
+  const tray = h('div', 'stray'); const items = [];
+  set.bins.forEach((b, i) => b.items.forEach(e => items.push({e, i})));
+  let left = items.length;
+  shuffle(items).forEach(it => {
+    const el = h('div', 'sitem emo', it.e); tray.append(el);
+    draggable(el, (d, x, y) => {
+      const idx = binEls.findIndex(b => hit(b.el, x, y, 20));
+      if (idx === it.i) {
+        d.classList.add('done'); flyInto(d, binEls[idx].body); sfx.pop(); boing(binEls[idx].el); left--;
+        if (!left) later(() => win(set.done), 350);
+        return true;
+      }
+      if (idx >= 0) { sfx.hint(); shake(binEls[idx].el); say(set.hint); }
+      return false;
+    });
+  });
+  st.append(bins, tray);
+}
+
+// 3 år: Memory
+function rMemory(st, n, g){
+  const pairs = n === 0 ? 3 : 4;
+  const syms = shuffle(MEM_POOL).slice(0, pairs);
+  const deck = shuffle([...syms, ...syms]);
+  sayInstr('Finn to like kort!');
+  const grid = h('div', 'mem ' + (pairs === 3 ? 'c3' : 'c4'));
+  let open = [], lock = false, found = 0;
+  deck.forEach(s => {
+    const c = h('button', 'card', `<div class="inner"><div class="face back">${charSVG(g.guide)}</div><div class="face front emo">${s}</div></div>`);
+    c.setAttribute('aria-label', 'Kort');
+    c.onclick = () => {
+      if (lock || c.classList.contains('open')) return;
+      actx(); sfx.flip(); c.classList.add('open'); open.push({c, s});
+      if (open.length < 2) return;
+      lock = true; const [a, b] = open; open = [];
+      if (a.s === b.s) {
+        later(() => {
+          a.c.classList.add('matched'); b.c.classList.add('matched'); boing(a.c); boing(b.c); sfx.pop(); found++;
+          if (found === pairs) win('Du fant alle parene!');
+          else { say(rand(['To like!','Et par!','Så bra!'])); lock = false; }
+        }, 450);
+      } else {
+        later(() => { a.c.classList.remove('open'); b.c.classList.remove('open'); lock = false; say('Ikke like. Prøv igjen!'); }, 1100);
+      }
+    };
+    grid.append(c);
+  });
+  st.append(grid);
+}
+
+// 3 år: Telling
+function rCount(st, n, g){
+  let t;
+  do { t = 1 + Math.floor(Math.random() * (n === 0 ? 3 : 5)); } while (t === g.last);
+  g.last = t;
+  sayInstr(`Jeg er sulten! Kan du gi meg ${NUMW[t]} jordbær?`);
+  const tn = h('div', 'target-num', `<span class="bignum">${t}</span><span class="dots">${'<i class="dot"></i>'.repeat(t)}</span>`);
+  const bush = h('div', 'bush');
+  const bowl = h('div', 'bowl'); const bin = h('div', 'bowlin');
+  bowl.append(bin, h('div', 'bowlimg emo', '🥣'));
+  let count = 0;
+  for (let i = 0; i < 7; i++) {
+    const b = h('button', 'berry emo', '🍓');
+    b.onclick = () => {
+      if (count >= t || b.classList.contains('done')) return;
+      actx(); b.classList.add('done'); flyInto(b, bin); count++; sfx.pop();
+      const d = tn.querySelectorAll('.dot')[count - 1]; if (d) d.classList.add('fill');
+      say(cap(NUMW[count]) + '!');
+      if (count === t) { st.classList.add('locked'); later(() => win(`${cap(NUMW[t])} jordbær! Nam nam, takk!`), 850); }
+    };
+    bush.append(b);
+  }
+  st.append(tn, bush, bowl);
+}
+
+// 3 år: Mønstre
+function rPattern(st, n){
+  const useEmo = n % 2 === 1;
+  const kind = n < 4 ? 'AB' : rand(['AB','ABC','AAB']);
+  const pat = {AB:[0, 1], ABC:[0, 1, 2], AAB:[0, 0, 1]}[kind];
+  const k = Math.max(...pat) + 1;
+  const picks = shuffle(useEmo ? PAT_EMO : COLORS);
+  const units = picks.slice(0, k), extra = picks[k];
+  const seq = [...Array(6)].map((_, i) => units[pat[i % pat.length]]);
+  const answer = seq[5];
+  const opts = shuffle([answer, ...shuffle([...units.filter(u => u !== answer), extra])].slice(0, 3));
+  const row = h('div', 'seq');
+  seq.slice(0, 5).forEach(u => { const c = h('div', 'pcell emo', useEmo ? u : ''); if (!useEmo) c.style.background = u.c; row.append(c); });
+  const q = h('div', 'pcell q', '?'); row.append(q);
+  const names = useEmo ? '' : seq.slice(0, 5).map(u => u.n).join(', ');
+  sayInstr(useEmo ? 'Se på rekka. Hva kommer nå?' : `${cap(names)}... Hva kommer nå?`);
+  const ob = h('div', 'opts');
+  opts.forEach(u => {
+    const b = h('button', 'opt emo', useEmo ? u : '<span class="sw2"></span>');
+    if (!useEmo) b.firstChild.style.background = u.c;
+    b.onclick = () => {
+      if (u === answer) {
+        q.classList.remove('q'); q.textContent = useEmo ? u : ''; if (!useEmo) q.style.background = u.c;
+        boing(q); win();
+      } else {
+        sfx.hint(); shake(b);
+        say(useEmo ? 'Se nøye en gang til. Hva kommer etter?' : `Hør: ${names}... og så?`);
+      }
+    };
+    ob.append(b);
+  });
+  st.append(row, ob);
+}
+
+// 3 år: Fargelegging
+function rColoring(st, n, g){
+  sayInstr(n === 0 ? 'Velg en farge, og trykk på bildet!' : 'Et nytt bilde! Hvilke farger vil du bruke?');
+  let sel = g.sel || PALETTE[0];
+  const paper = h('div', 'paper', COLORING[n % COLORING.length]);
+  paper.querySelectorAll('.rg').forEach(p => p.addEventListener('pointerdown', e => { e.preventDefault(); actx(); p.setAttribute('fill', sel); sfx.pop(); }));
+  const pal = h('div', 'palette');
+  PALETTE.forEach(c => {
+    const s = h('button', 'sw' + (c === sel ? ' sel' : ''));
+    s.style.background = c; s.setAttribute('aria-label', 'Farge');
+    s.onclick = () => { actx(); sel = c; g.sel = c; pal.querySelectorAll('.sw').forEach(x => x.classList.toggle('sel', x === s)); sfx.tap(); };
+    pal.append(s);
+  });
+  const btns = h('div', 'cbtns');
+  const nxt = h('button', 'pill', '<span class="emo">🔄</span> Nytt bilde'); nxt.onclick = () => { roundNo++; runRound(); };
+  const done = h('button', 'pill go', '<span class="emo">⭐</span> Ferdig!'); done.onclick = () => win('For et fint bilde!');
+  btns.append(nxt, done);
+  st.append(paper, pal, btns);
+}
+
+// 3 år: Kle på Toffe
+function rDress(st, n){
+  const w = WEATHERS[n % WEATHERS.length];
+  sayInstr(w.intro);
+  const scene = h('div', 'dressscene ' + w.k);
+  if (w.k !== 'sol') {
+    for (let i = 0; i < 18; i++) {
+      const p = h('div', 'fallp ' + (w.k === 'regn' ? 'drop' : 'flake'), w.k === 'sno' ? '❄' : '');
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = -(Math.random() * 5) + 's';
+      scene.append(p);
+    }
+  }
+  const badge = h('div', 'weather', `<span class="emo">${w.icon}</span>${w.label}`);
+  const tw = h('div', 'toffewrap', TOFFE_FULL);
+  const tray = h('div', 'clothes');
+  let left = w.good.length;
+  shuffle([...w.good, ...w.bad]).forEach(e => {
+    const it = h('div', 'sitem emo', e); tray.append(it);
+    draggable(it, (el, x, y) => {
+      if (!hit(tw, x, y, 30)) return false;
+      const cl = CLOTHES[e];
+      if (w.good.includes(e)) {
+        el.classList.add('done'); el.style.transform = '';
+        const worn = h('span', 'worn emo', e);
+        worn.style.left = cl.x + '%'; worn.style.top = cl.y + '%';
+        worn.style.fontSize = `calc(var(--w) * ${cl.s})`;
+        tw.append(worn); sfx.pop(); left--;
+        if (!left) later(() => win(w.done), 450); else say(`Ja, ${cl.n}!`);
+        return true;
+      }
+      sfx.hint(); say(`Trenger Toffe ${cl.n} ${w.when}? Prøv noe annet!`);
+      return false;
+    });
+  });
+  scene.append(badge, tw, tray);
+  st.append(scene);
+}
+
+const GAMES = {
+  2: [
+    {id:'surprise', name:'Trykk og overrask', icon:'🐶', guide:'toffe', intro:'Hei, jeg er Toffe!', round:rSurprise},
+    {id:'find', name:'Hvor er?', icon:'🔍', guide:'pling', intro:'Hei, jeg er Pling!', round:rFind},
+    {id:'colors', name:'Farger og former', icon:'🔺', guide:'nuppe', intro:'Hei, jeg er Nuppe!', round:rColors},
+    {id:'drag', name:'Legg på plass', icon:'🧺', guide:'toffe', init(g){ g.order = shuffle(DRAG_PAIRS); }, round:rDrag},
+    {id:'music', name:'Musikk', icon:'🎵', guide:'nuppe', round:rMusic}
+  ],
+  3: [
+    {id:'puzzle', name:'Puslespill', icon:'🧩', guide:'pling', init(g){ g.order = shuffle(PUZZLES.map((_, i) => i)); }, round:rPuzzle},
+    {id:'sort', name:'Sortering', icon:'📦', guide:'nuppe', round:rSort},
+    {id:'memory', name:'Memory', icon:'🃏', guide:'pling', round:rMemory},
+    {id:'count', name:'Telling', icon:'🍓', guide:'toffe', round:rCount},
+    {id:'pattern', name:'Mønstre', icon:'🌈', guide:'nuppe', round:rPattern},
+    {id:'color', name:'Fargelegging', icon:'🖍️', guide:'pling', round:rColoring},
+    {id:'dress', name:'Kle på Toffe', icon:'🧥', guide:'pling', round:rDress}
+  ]
+};
+
+/* =========================================================
+   Navigasjon og spillflyt
+   ========================================================= */
+let age = null, current = null, roundNo = 0, token = 0, stars = 0, playStart = null;
+const stage = $('#stage');
+
+function later(fn, ms){ const t = token; return setTimeout(() => { if (t === token) fn(); }, ms); }
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+  $('#guide').hidden = id === 'home';
+}
+function setGuide(id){ $('#gchar').innerHTML = charSVG(id); }
+
+function goHome(){ token++; hush(); stage.innerHTML = ''; show('home'); }
+function openMenu(a){
+  token++; hush(); age = a; stage.innerHTML = '';
+  if (!playStart) playStart = Date.now();
+  const grid = $('#menuGrid'); grid.innerHTML = '';
+  $('#menu').classList.toggle('age3', a === 3);
+  $('#menuTitle').textContent = a === 2 ? 'Spill for 2-åringer' : 'Spill for 3-åringer';
+  GAMES[a].forEach(g => {
+    const t = h('button', 'gtile', `<span class="emo">${g.icon}</span><span class="t">${g.name}</span>`);
+    t.onclick = () => { actx(); startGame(g); };
+    grid.append(t);
+  });
+  setGuide(a === 2 ? 'toffe' : 'pling');
+  show('menu');
+  say('Hva vil du leke med?');
+}
+function startGame(g){
+  token++; current = g; roundNo = 0; g.onResize = null;
+  if (g.init) g.init(g);
+  $('#gameTitle').textContent = g.name;
+  setGuide(g.guide);
+  show('game');
+  runRound();
+}
+function runRound(){
+  token++; stage.innerHTML = ''; stage.classList.remove('locked'); stage.scrollTop = 0;
+  current.onResize = null;
+  current.round(stage, roundNo, current);
+}
+function win(msg){
+  stage.classList.add('locked');
+  sfx.win(); burst(); cheer();
+  stars++; $('#starN').textContent = stars;
+  say(msg || rand(PRAISE));
+  later(() => { roundNo++; runRound(); }, 2400);
+}
+
+$('#trio').innerHTML = ['nuppe','toffe','pling'].map(id => `<div class="c">${charSVG(id)}</div>`).join('');
+$('#sleepers').innerHTML = ['nuppe','toffe','pling'].map(id => charSVG(id)).join('');
+document.querySelectorAll('.agebtn').forEach(b => b.onclick = () => { actx(); openMenu(+b.dataset.age); });
+$('#menuBack').onclick = goHome;
+$('#gameBack').onclick = () => openMenu(age);
+$('#repeatBtn').onclick = () => say(instruction);
+$('#gchar').onclick = () => { if ($('#game').classList.contains('active') && instruction) say(instruction); else say('Hva vil du leke med?'); };
+addEventListener('resize', () => { if (current && current.onResize) current.onResize(); });
+
+/* ---------- Voksenpanel ---------- */
+function refreshPanel(){
+  document.querySelectorAll('.seg').forEach(seg => {
+    const key = seg.dataset.set;
+    seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', String(settings[key]) === b.dataset.v));
+  });
+  pickVoice();
+  $('#voiceInfo').textContent = !('speechSynthesis' in window)
+    ? 'Denne nettleseren har ikke talesyntese, så figurene viser teksten i en snakkeboble i stedet.'
+    : nbVoice ? `Figurene snakker med den norske stemmen «${nbVoice.name}» som finnes på enheten.`
+              : 'Fant ingen norsk stemme på enheten, så nettleserens standardstemme brukes. Du kan legge til norsk tale i enhetens innstillinger.';
+}
+document.querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const key = seg.dataset.set; const v = b.dataset.v;
+  settings[key] = key === 'pause' ? +v : v === 'true';
+  if (key === 'pause') playStart = Date.now();
+  saveSettings(); refreshPanel();
+}));
+holdButton($('#parentBtn'), 1500, () => { refreshPanel(); $('#parentOv').classList.add('show'); });
+$('#parentClose').onclick = () => $('#parentOv').classList.remove('show');
+
+/* ---------- Pausepåminnelse ---------- */
+setInterval(() => {
+  if (!playStart || !settings.pause || $('#pauseOv').classList.contains('show')) return;
+  if (Date.now() - playStart > settings.pause * 60000) {
+    token++; hush(); $('#pauseOv').classList.add('show');
+    say('Nå har vi lekt lenge. Det er tid for en pause!');
+  }
+}, 10000);
+holdButton($('#pauseContinue'), 2000, () => { $('#pauseOv').classList.remove('show'); playStart = Date.now(); if (age) openMenu(age); else goHome(); });
+
+/* ---------- iPad-app: hindre zoom og registrere offline-støtte ---------- */
+['gesturestart','gesturechange','gestureend'].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
+let lastTouchEnd = 0;
+document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTouchEnd < 350) e.preventDefault(); lastTouchEnd = now; }, {passive:false});
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
